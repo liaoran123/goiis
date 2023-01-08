@@ -1,0 +1,44 @@
+package main
+
+import (
+	"fmt"
+	"io/ioutil"
+	"os"
+	"os/exec"
+	"strings"
+	"time"
+)
+
+//所有程序须在同一个目录下
+func sh(fp string) {
+	fmt.Println("开始守护:", fp)
+	loop := 1
+	for {
+		cmd := exec.Command(fp)
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		err := cmd.Start()
+		if err != nil {
+			//实际上程序会直接退出，不会执行这些程序。
+			fmt.Fprintf(os.Stderr, "[-] Error: %s\n", err)
+			break
+		} else {
+			fmt.Println(loop, time.Now())
+			loop++
+		}
+		cmd.Wait()
+	}
+	//fmt.Println("找不到程序：", fp)
+	//os.Exit(0)
+}
+func shs(fp string) {
+	scexe, _ := ioutil.ReadFile(fp + "shouhu.txt")
+	exes := strings.Split(string(scexe), "|")
+	for _, v := range exes {
+		if !strings.HasSuffix(v, ".exe") {
+			continue
+		}
+		go sh(v)
+	}
+}

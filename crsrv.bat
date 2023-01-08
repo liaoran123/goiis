@@ -1,0 +1,1 @@
+sc create goiis binpath= "goiis.exe" displayname= "goiis" depend= Tcpip start= auto 
